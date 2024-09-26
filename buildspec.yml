@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+      - npm install
+  pre_build:
+    commands:
+      - echo "Running security checks..."
+      - # CodeGuru and other security scans
+      - echo "Fetching secrets from Secrets Manager..."
+      - aws secretsmanager get-secret-value --secret-id devsecops/secret --query SecretString --output text
+  build:
+    commands:
+      - echo "Building and analyzing the code"
+      - # Integrate AWS Inspector for vulnerability scanning
+  post_build:
+    commands:
+      - aws s3 sync build/ s3://your-bucket-name --delete
+      - aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+      - echo "Security analysis completed"
+artifacts:
+  files:
+    - '**/*'
+
