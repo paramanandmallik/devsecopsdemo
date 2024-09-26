@@ -2,14 +2,21 @@
   "name": "devsecopsdemo",
   "version": "1.0.0",
   "description": "Node.js app with vulnerabilities for AWS security demo",
-  "main": "src/app.js",
+  "main": "build/app.js",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node build/app.js",
+    "build": "babel src -d build"
   },
   "dependencies": {
     "express": "^4.17.1",
     "mysql": "^2.18.1",
     "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.x.x",
+    "@babel/cli": "^7.x.x",
+    "@babel/preset-env": "^7.x.x"
   }
 }
+
 
