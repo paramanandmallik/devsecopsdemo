@@ -6,28 +6,26 @@ phases:
       - echo "Installing dependencies..."
       - npm install  # Install dependencies for your project
     
-  pre_build:
+  sast:  # Renamed from pre_build to reflect SAST purpose
     commands:
       - echo "Running security checks..."
       - echo "Fetching secrets from Secrets Manager..."
       - aws secretsmanager get-secret-value --secret-id devsecops/secret --query SecretString --output text
 
-      # AWS CodeGuru Reviewer - trigger code analysis
+      # Triggering CodeGuru Reviewer for code analysis
+      - CLIENT_REQUEST_TOKEN=$(date +%s)
       - echo "Triggering CodeGuru Reviewer for the branch..."
-      - aws codeguru-reviewer "create-code-review" \
+      - aws codeguru-reviewer create-code-review \
           --name "CodeReviewForBuild" \
           --repository-association-arn "arn:aws:codeguru-reviewer:us-east-1:962265335633:repository-association/87cd0b5e-8434-48bf-97e8-920ca807ddb6" \
-          --type '{"RepositoryAnalysis": {"RepositoryHead": {"BranchName": "mainline"}}}' \
-          --client-request-token $(date +%s)  # Ensure token is unique for each run
+          --type '{"RepositoryAnalysis": {"RepositoryHead": {"BranchName": "main"}}}' \
+          --client-request-token "$CLIENT_REQUEST_TOKEN"
       - echo "CodeGuru Reviewer initiated for devsecopsdemo."
 
   build:
     commands:
       - echo "Building and analyzing the code..."
       - npm run build  # Build your project (adjust this if using another build system)
-
-      # AWS Inspector can also be run during this phase if needed for vulnerability scanning
-      # You would need to run Inspector scans on EC2 if applicable
 
   post_build:
     commands:
