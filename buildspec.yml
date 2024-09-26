@@ -18,7 +18,7 @@ phases:
       - aws codeguru-reviewer create-code-review \
           --name "CodeReviewForBuild" \
           --repository-association-arn "arn:aws:codeguru-reviewer:us-east-1:962265335633:repository-association/87cd0b5e-8434-48bf-97e8-920ca807ddb6" \
-          --type '{"RepositoryAnalysis": {"RepositoryHead": {"BranchName": "main"}}}'
+          --type RepositoryAnalysis
           --client-request-token "$CLIENT_REQUEST_TOKEN"
       - echo "CodeGuru Reviewer initiated for devsecopsdemo."
 
