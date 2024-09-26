@@ -4,22 +4,39 @@ phases:
   install:
     commands:
       - echo "Installing dependencies..."
-      - npm install
+      - npm install  # Install dependencies for your project
+    
   pre_build:
     commands:
       - echo "Running security checks..."
-      - # CodeGuru and other security scans
       - echo "Fetching secrets from Secrets Manager..."
       - aws secretsmanager get-secret-value --secret-id devsecops/secret --query SecretString --output text
+
+      # AWS CodeGuru Reviewer - trigger code analysis
+      - echo "Triggering CodeGuru Reviewer for the branch..."
+      - aws codeguru-reviewer create-code-review \
+          --name CodeReviewForBuild \
+          --repository-association-arn arn:aws:codeguru-reviewer:us-east-1:962265335633:repository-association/87cd0b5e-8434-48bf-97e8-920ca807ddb6 \
+          --type RepositoryAnalysis \
+          --client-request-token $(date +%s)  # Ensure token is unique for each run
+      - echo "CodeGuru Reviewer initiated for devsecopsdemo."
+
   build:
     commands:
-      - echo "Building and analyzing the code"
-      - # Integrate AWS Inspector for vulnerability scanning
+      - echo "Building and analyzing the code..."
+      - npm run build  # Build your project (adjust this if using another build system)
+
+      # AWS Inspector can also be run during this phase if needed for vulnerability scanning
+      # You would need to run Inspector scans on EC2 if applicable
+
   post_build:
     commands:
-      - aws s3 sync build/ s3://app1-hosting-dev --delete
-      - aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
-      - echo "Security analysis completed"
+      - echo "Syncing files to S3..."
+      - aws s3 sync build/ s3://app1-hosting-dev --delete  # Sync build artifacts to S3
+      - aws cloudfront create-invalidation --distribution-id E2APJ63LEIP8T0 --paths "/*"  # Invalidate CloudFront cache
+
+      - echo "Code review and build completed."
+      
 artifacts:
   files:
     - '**/*'
