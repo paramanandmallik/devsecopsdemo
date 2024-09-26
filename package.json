@@ -1,5 +1,5 @@
 {
-  "name": "aws-devsecops-demo",
+  "name": "devsecopsdemo",
   "version": "1.0.0",
   "description": "Node.js app with vulnerabilities for AWS security demo",
   "main": "src/app.js",
