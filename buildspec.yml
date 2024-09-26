@@ -6,7 +6,7 @@ phases:
       - echo "Installing dependencies..."
       - npm install  # Install dependencies for your project
     
-  sast:  # Renamed from pre_build to reflect SAST purpose
+  pre-build:  # Renamed from pre_build to reflect SAST purpose
     commands:
       - echo "Running security checks..."
       - echo "Fetching secrets from Secrets Manager..."
