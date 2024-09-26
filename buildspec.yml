@@ -17,7 +17,7 @@ phases:
       - # Integrate AWS Inspector for vulnerability scanning
   post_build:
     commands:
-      - aws s3 sync build/ s3://your-bucket-name --delete
+      - aws s3 sync build/ s3://app1-hosting-dev --delete
       - aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
       - echo "Security analysis completed"
 artifacts:
